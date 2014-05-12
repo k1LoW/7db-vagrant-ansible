@@ -1,0 +1,35 @@
+---
+- name: PostgreSQL moduleに必要なパッケージをインストール
+  yum: name={{ item }} state=present enablerepo=epel
+  with_items:
+    - python-psycopg2
+- name: PostgreSQLのリポジトリ追加
+  yum: name=http://yum.postgresql.org/9.3/redhat/rhel-6-x86_64/pgdg-centos93-9.3-1.noarch.rpm state=present
+- name: PostgreSQLリポジトリを無効化
+  raw: sed -i -e 's/^enabled=1/enabled=0/g' /etc/yum.repos.d/pgdg-93-centos.repo
+- name: PostgreSQLのインストール
+  yum: name={{ item }} enablerepo=pgdg93 state=latest
+  with_items:
+    - postgresql93-server
+    - postgresql93-contrib
+- name: PostgreSQLがinitdbされているかpostgresql.confで確認
+  command: test -f "/var/lib/pgsql/data/postgresql.conf"
+  register: result
+  ignore_errors: true
+- name: initdb
+  command: service postgresql-9.3 initdb -E UNICODE --no-locale -D /var/lib/pgsql/data
+  when: result|failed
+- name: pg_hba.confを設定
+  template: src=pg_hba.conf.j2 dest=/var/lib/pgsql/9.3/data/pg_hba.conf
+  notify: restart postgresql
+- name: postgresql.confを設定
+  copy: src=postgresql.conf dest=/var/lib/pgsql/9.3/data/postgresql.conf
+  notify: restart postgresql
+- name: PostgreSQLをスタート
+  service: name=postgresql-9.3 state=started enabled=yes
+- name: データベースを作成
+  postgresql_db:
+    name={{ dbname }}
+    state=present
+    encoding='UTF-8'
+    template='template0'
