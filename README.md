@@ -8,7 +8,7 @@
 
 ## Usage
 
-    $ cd 1-postgresql/
+    $ cd 2-postgresql/
     $ vagrant up
 
 ## How to box create
