@@ -8,7 +8,14 @@
 
 ## Usage
 
+### PostgreSQL
+
     $ cd 2-postgresql/
+    $ vagrant up
+
+### Riak
+
+    $ cd 3-riak/
     $ vagrant up
 
 ## How to box create

@@ -1,0 +1,36 @@
+---
+- name: Development toolsをインストール
+  yum: name="@Development tools" state=present
+- name: Erlangをインストールするのに必要なパッケージをインストール
+  yum: name={{ item }} state=present
+  with_items:
+    - git
+    - unixODBC.x86_64
+    - unixODBC-devel.x86_64
+    - wxBase.x86_64
+    - wxGTK.x86_64
+    - wxGTK-gl
+- name: Riakを既にインストールしているか確認
+  command: test -f "/home/vagrant/riak-1.4.8.tar.gz"
+  register: result
+  ignore_errors: true
+- name: Erlang R15B01をインストール
+  yum: name=http://packages.erlang-solutions.com/site/esl/esl-erlang/FLAVOUR_1_general/esl-erlang_15.b.1~centos~6_amd64.rpm state=present
+  when: result|failed
+- name: Riakを取得
+  get_url: url=http://s3.amazonaws.com/downloads.basho.com/riak/1.4/1.4.8/riak-1.4.8.tar.gz dest=/home/vagrant/riak-1.4.8.tar.gz
+  when: result|failed
+  sudo: false
+- name: Riakのソースを解凍
+  command: chdir=/home/vagrant/ tar xvf riak-1.4.8.tar.gz
+  when: result|failed
+  sudo: false
+- name: make all
+  command: chdir=/home/vagrant/riak-1.4.8 make all
+  when: result|failed
+  sudo: false
+
+ 
+
+
+

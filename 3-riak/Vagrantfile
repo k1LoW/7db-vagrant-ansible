@@ -10,12 +10,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ansible.playbook = "provisioner/ansible/site.yml"
     ansible.verbose = "v"
     ansible.extra_vars = {
-      hostname: "7db.postgresql.vagrant",
-      dbname: "testdb"
+      hostname: "7db.riak.vagrant"
     }
   end
   config.vm.provider :virtualbox do |vb|
-    vb.name = "7db.vagrant-postgresql"
+    vb.name = "7db.vagrant-riak"
     vb.customize ["modifyvm", :id, "--cpuexecutioncap", "80"]
     vb.customize ["modifyvm", :id, "--memory", "2048"]
     vb.customize ["modifyvm", :id, "--natdnsproxy1", "off"]
