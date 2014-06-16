@@ -10,7 +10,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ansible.playbook = "provisioner/ansible/site.yml"
     ansible.verbose = "v"
     ansible.extra_vars = {
-      hostname: "7db.riak.vagrant"
+      hostname: "7db.riak.vagrant",
+      riak_version: "1.4.9"
     }
   end
   config.vm.provider :virtualbox do |vb|
