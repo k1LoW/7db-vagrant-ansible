@@ -1,0 +1,6 @@
+---
+- name: mongodb.repoを設定
+  copy: src=mongodb.repo dest=/etc/yum.repos.d/mongodb.repo
+- name: MongoDBをインストール
+  yum: name=mongodb-org
+

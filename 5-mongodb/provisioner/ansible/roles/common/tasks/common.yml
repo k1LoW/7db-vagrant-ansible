@@ -1,0 +1,31 @@
+---
+- name: hostnameを設定
+  hostname: name={{ hostname }}
+- name: 最低限必要なパッケージをインストール
+  yum: name={{ item }} state=present
+  with_items:
+    - zip
+    - unzip
+    - wget
+    - git-svn
+- name: SELinux moduleのためのパッケージをインストール
+  yum: name=libselinux-python state=present
+- name: SELinuxをOFFに設定
+  selinux: state=disabled
+- name: SELinuxをOFFに設定
+  shell: if [ "`/usr/sbin/getenforce`" = "Enforcing" ]; then /usr/sbin/setenforce 0; fi
+- name: 不必要なサービスをstop
+  service: name={{ item }} state=stopped
+  with_items:
+    - ip6tables
+    - postfix
+- name: 不必要なサービスをdisable
+  service: name={{ item }} enabled=no
+  with_items:
+    - ip6tables
+    - postfix
+    - iscsi
+    - iscsid
+    - auditd
+    - mdmonitor
+    - netfs
